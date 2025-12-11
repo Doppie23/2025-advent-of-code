@@ -14,28 +14,15 @@ for l in input.split("\n"):
 
 
 @cache
-def dfs(n, seen_fft: bool, seen_dac: bool):
+def dfs(n, to_see: frozenset):
     if n == "out":
-        return int(seen_dac and seen_fft)
+        return int(len(to_see) == 0)
 
-    re_fft = False
-    re_dac = False
-    if n == "fft":
-        seen_fft = True
-        re_fft = True
-    if n == "dac":
-        seen_dac = True
-        re_dac = True
+    if n in to_see:
+        to_see = to_see.difference({n})
 
-    res = sum(dfs(c, seen_fft, seen_dac) for c in g[n])
-
-    if re_fft:
-        seen_fft = False
-    if re_dac:
-        seen_dac = False
-
-    return res
+    return sum(dfs(c, to_see) for c in g[n])
 
 
-print(dfs("you", True, True))
-print(dfs("svr", False, False))
+print(dfs("you", frozenset({})))
+print(dfs("svr", frozenset({"fft", "dac"})))
